@@ -1,11 +1,18 @@
 #!/bin/bash
 
+# Package installation function
 python_package_install () {
     package=$1
     if [[  $( pip freeze | grep -w $package ) ]]; then
         pip install $package
     fi
 
+}
+
+os_system_ver () {
+    if [[ "$OSTYPE" == "linux-gnu"]]; then
+        echo " OK "
+    fi
 }
 
 # verify Python 3.8.5 version used in the project
@@ -15,18 +22,21 @@ python_package_install () {
 update_project_env (){
 
     py_version=$( python -c 'import sys; print(sys.version_info[:3])' )
-    git pull origin ${1:-main}
+    c_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+    git_remote=$( git remote -v )
+
     if [[ "$py_version" = '(3, 8, 5)' ]]; then
         echo -e "Incorrect python environment. Make sure you're working with Python 3.8.5"
     else
         echo "incorrect"
+        exit 1
     fi
   
-    git_remote=$( git remote -v )
-
     if [[ ! $( echo ${git_remote[0]} | cut -d ' ' -f2 ) == 'https://github.com/abdala9512/gpt2-multip-app.git' ]]; then
         echo "You're remote isn't GPT2 project. Verify"
         exit 1
+    else   
+        git pull origin $c_branch
     fi
 
     if [[ -f requirements.txt ]]; then
@@ -36,8 +46,10 @@ update_project_env (){
         done
     else
         echo "requirements.txt file not found"
+        exit 1
     fi
 
 }
 
 export -f update_project_env
+update_project_env
