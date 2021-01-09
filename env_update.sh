@@ -22,7 +22,12 @@ update_project_env (){
         echo "incorrect"
     fi
   
-    git_remote=$( git remote -v | cut -d ' ' -f1 )
+    git_remote=$( git remote -v )
+
+    if [[ ! $( echo ${git_remote[0]} | cut -d ' ' -f2 ) == 'https://github.com/abdala9512/gpt2-multip-app.git' ]]; then
+        echo "You're remote isn't GPT2 project. Verify"
+        exit 1
+    fi
 
     if [[ -f requirements.txt ]]; then
         for lib in $( cat requirements.txt )
