@@ -8,7 +8,11 @@ python_package_install () {
 
 }
 
-update_repository (){
+# verify Python 3.8.5 version used in the project
+# Update requirements.txt 
+# check correct remote
+# Perfom git pull operation in the current branch to avoid possible errors
+update_project_env (){
 
     py_version=$( python -c 'import sys; print(sys.version_info[:3])' )
     git pull origin ${1:-main}
@@ -18,7 +22,7 @@ update_repository (){
         echo "incorrect"
     fi
   
-    git_remote = $( git remote -v )
+    git_remote=$( git remote -v | cut -d ' ' -f1 )
 
     if [[ -f requirements.txt ]]; then
         for lib in $( cat requirements.txt )
@@ -31,4 +35,4 @@ update_repository (){
 
 }
 
-export -f update_repository
+export -f update_project_env
