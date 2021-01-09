@@ -3,7 +3,7 @@
 # Package installation function
 python_package_install () {
     package=$1
-    if [[  $( pip freeze | grep -w $package ) ]]; then
+    if [[  -z $( pip freeze | grep -w $package ) ]]; then
         pip install $package
     fi
 
